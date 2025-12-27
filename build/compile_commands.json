@@ -37,6 +37,12 @@
 },
 {
   "directory": "C:/Users/Tigrics/Documents/Projects-c-cpp/Primitive-engine/build",
+  "command": "C:\\ProgramData\\mingw64\\mingw64\\bin\\gcc.exe  @CMakeFiles/PrimitiveEngine.dir/includes_C.rsp -g -o CMakeFiles\\PrimitiveEngine.dir\\src\\glad.c.obj -c C:\\Users\\Tigrics\\Documents\\Projects-c-cpp\\Primitive-engine\\src\\glad.c",
+  "file": "C:/Users/Tigrics/Documents/Projects-c-cpp/Primitive-engine/src/glad.c",
+  "output": "CMakeFiles/PrimitiveEngine.dir/src/glad.c.obj"
+},
+{
+  "directory": "C:/Users/Tigrics/Documents/Projects-c-cpp/Primitive-engine/build",
   "command": "C:\\ProgramData\\mingw64\\mingw64\\bin\\g++.exe  @CMakeFiles/PrimitiveEngine.dir/includes_CXX.rsp -g -o CMakeFiles\\PrimitiveEngine.dir\\src\\main.cpp.obj -c C:\\Users\\Tigrics\\Documents\\Projects-c-cpp\\Primitive-engine\\src\\main.cpp",
   "file": "C:/Users/Tigrics/Documents/Projects-c-cpp/Primitive-engine/src/main.cpp",
   "output": "CMakeFiles/PrimitiveEngine.dir/src/main.cpp.obj"

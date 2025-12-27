@@ -8,6 +8,7 @@ set(CMAKE_DEPENDS_LANGUAGES
 
 # The set of dependency files which are needed:
 set(CMAKE_DEPENDS_DEPENDENCY_FILES
+  "C:/Users/Tigrics/Documents/Projects-c-cpp/Primitive-engine/src/glad.c" "CMakeFiles/PrimitiveEngine.dir/src/glad.c.obj" "gcc" "CMakeFiles/PrimitiveEngine.dir/src/glad.c.obj.d"
   "C:/Users/Tigrics/Documents/Projects-c-cpp/Primitive-engine/src/main.cpp" "CMakeFiles/PrimitiveEngine.dir/src/main.cpp.obj" "gcc" "CMakeFiles/PrimitiveEngine.dir/src/main.cpp.obj.d"
   )
 
