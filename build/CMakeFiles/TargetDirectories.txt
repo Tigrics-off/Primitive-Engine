@@ -1,0 +1,4 @@
+C:/Users/Tigrics/Documents/Projects-c-cpp/Primitive-engine/build/CMakeFiles/PrimitiveEngine.dir
+C:/Users/Tigrics/Documents/Projects-c-cpp/Primitive-engine/build/CMakeFiles/imgui.dir
+C:/Users/Tigrics/Documents/Projects-c-cpp/Primitive-engine/build/CMakeFiles/edit_cache.dir
+C:/Users/Tigrics/Documents/Projects-c-cpp/Primitive-engine/build/CMakeFiles/rebuild_cache.dir
