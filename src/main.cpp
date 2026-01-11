@@ -1,111 +1,157 @@
 #include "glad/glad.h"
 #include "GLFW/glfw3.h"
-#include <cstdlib>
-
-#include "imgui/imgui.h"
-#include "imgui/backends/imgui_impl_glfw.h"
-#include "imgui/backends/imgui_impl_opengl3.h"
 
 #include "debug/debug.hpp"
 
-using namespace std::string_literals;
+#include <sstream>
+#include <fstream>
 
-bool dark_mode = true;
+#include <glm/glm.hpp>
+#include <glm/gtc/matrix_transform.hpp>
+#include <glm/gtc/type_ptr.hpp>
 
 GLFWwindow *win;
 
-void load_arg(int argc, char const *argv[])
+float verticles[] = {
+    //position              color
+    -0.5f, +0.5f, +0.0f,    0.4f, 0.6f, 0.2f,
+    -0.5f, -0.5f, +0.0f,    0.2f, 0.8f, 0.0f,
+    +0.5f, -0.5f, +0.0f,    0.0f, 0.0f, 0.0f,
+
+};
+
+glm::mat4 transform(1.0f);
+
+unsigned int vao, vbo;
+unsigned int vert, frag, shader_program;
+
+bool psx_style = true;
+
+void load_arg(int argc, const char *argv[])
 {
-    for(int i = 1; i <= argc; i++)
+    for (int i = 0; i <= argc; i++)
     {
-        if (argv[i] == "--light") dark_mode = false;
-        if (argv[i] == "--dark") dark_mode = true;
-        if (argv[i] == "--nocolor") debug::no_color(true);
+        if (argv[i] == "--nocolor")
+        {
+            debug::no_color(true);
+        }
+        if (argv[i] == "--no-psx")
+        {
+            psx_style = false;
+        }
     }
 }
 
-void open_link(std::string link)
+std::string read_file(std::string name)
 {
-    #ifdef __WIN32__
-        system(("start " + link).c_str());
-    #elifdef __APPLE__
-        system(("open " + link).c_str());
-    #elifdef __linux__
-        system(("xdg-open " + link).c_str());
-    #else
-        debug::error("Unknown sysyem (who are you, warrior?)")
-    #endif
+    std::ifstream file{name};
+
+    std::stringstream buffer;
+
+    buffer << file.rdbuf();
+
+    return buffer.str();
 }
 
-void input()
+void format_verticles()
 {
-    bool ctrl = glfwGetKey(win, GLFW_KEY_LEFT_CONTROL) == GLFW_PRESS || glfwGetKey(win, GLFW_KEY_RIGHT_CONTROL);
-    bool shift = glfwGetKey(win, GLFW_KEY_LEFT_SHIFT) == GLFW_PRESS || glfwGetKey(win, GLFW_KEY_RIGHT_SHIFT);
-    bool alt = glfwGetKey(win, GLFW_KEY_LEFT_ALT) == GLFW_PRESS || glfwGetKey(win, GLFW_KEY_RIGHT_ALT);
+    glGenVertexArrays(1, &vao);
+    glBindVertexArray(vao);
 
-    if(ctrl && glfwGetKey(win, GLFW_KEY_W) == GLFW_PRESS)
+    glGenBuffers(1, &vbo);
+    glBindBuffer(GL_ARRAY_BUFFER, vbo);
+    glBufferData(GL_ARRAY_BUFFER, sizeof(verticles), verticles, GL_STATIC_DRAW);
+
+    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), nullptr);
+    glEnableVertexAttribArray(0);
+
+    glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), (void*)(3*sizeof(float)));
+    glEnableVertexAttribArray(1);
+}
+
+void load_shaders()
+{
+    std::string vert_source, frag_source;
+    const char *vert_code, *frag_code;
+
+    vert_source = read_file("assets/shaders/v.vert");
+    frag_source = read_file("assets/shaders/f.frag");
+
+    vert_code = vert_source.c_str();
+    frag_code = frag_source.c_str();
+
+    int good;
+    char log[512];
+
+    // Vertex
+    vert = glCreateShader(GL_VERTEX_SHADER);
+    glShaderSource(vert, 1, &vert_code, nullptr);
+    glCompileShader(vert);
+
+    glGetShaderiv(vert, GL_COMPILE_STATUS, &good);
+    if (!good)
     {
-        glfwSetWindowShouldClose(win, true);
+        glGetShaderInfoLog(vert, 512, nullptr, log);
+        debug::error("fail compile vertex shader\n\n" + std::string(log));
     }
+
+    // Fragment
+    frag = glCreateShader(GL_FRAGMENT_SHADER);
+    glShaderSource(frag, 1, &frag_code, nullptr);
+    glCompileShader(frag);
+
+    glGetShaderiv(frag, GL_COMPILE_STATUS, &good);
+    if (!good)
+    {
+        glGetShaderInfoLog(frag, 512, nullptr, log);
+        debug::error("fail compile fragment shader\n\n" + std::string(log));
+    }
+
+    // Program
+    shader_program = glCreateProgram();
+    glAttachShader(shader_program, vert);
+    glAttachShader(shader_program, frag);
+    glLinkProgram(shader_program);
+
+    glGetShaderiv(shader_program, GL_LINK_STATUS, &good);
+    if (!good)
+    {
+        glGetShaderInfoLog(shader_program, 512, nullptr, log);
+        debug::error("fail compile shader program\n\n" + std::string(log));
+    }
+    
+    glDeleteShader(vert);
+    glDeleteShader(frag);
 }
 
-void draw_gui()
+void rotate(glm::mat4x4 *matrix, float angle, unsigned int direction)
 {
-    ImGui::SetNextWindowPos(ImVec2(0, 0));
-    ImGui::SetNextWindowSize(ImGui::GetIO().DisplaySize);
-
-    if (ImGui::Begin(
-        "Primitive Engine", 
-        nullptr, 
-        ImGuiWindowFlags_NoDecoration | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoMove | ImGuiWindowFlags_MenuBar
-    ))
-        {
-        if (ImGui::BeginMenuBar())
-        {
-            if (ImGui::BeginMenu("File"))
-            {
-                if (ImGui::MenuItem("New", "Ctrl+N"));
-                if (ImGui::MenuItem("Close", "Ctrl+W"))
-                {
-                    glfwSetWindowShouldClose(win, true);
-                }
-                ImGui::EndMenu();
-            }
-            if (ImGui::BeginMenu("Edit"))
-            {
-                ImGui::EndMenu();
-            }
-            if (ImGui::BeginMenu("Help"))
-            {
-                if (ImGui::MenuItem("Github"))
-                {
-                    open_link("https://github.com/Tigrics-off/Primitive-Engine");
-                }
-                ImGui::EndMenu();
-            }
-            ImGui::EndMenuBar();
-        }
-
-        ImGui::SetWindowPos(ImVec2(0, 340));
-        ImGui::SetWindowSize(ImVec2(200, 300));
-        if (ImGui::Begin("Properties", nullptr, ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_AlwaysAutoResize))
-        {
-            ImGui::End();
-        }
-        ImGui::End();
+    glm::vec3 vec;
+    
+    switch (direction)
+    {
+        case 0: vec = glm::vec3(1, 0, 0); break;
+        case 1: vec = glm::vec3(0, 1, 0); break;
+        case 2: vec = glm::vec3(0, 0, 1); break;
+        default: return;
     }
+
+    float timed_angle = glfwGetTime() * glm::radians(angle);
+    *matrix = glm::rotate(glm::mat4(1.0), timed_angle, vec);
 }
 
-int main(int argc, char const *argv[])
+int main(int argc, const char *argv[])
 {
-    load_arg(argc, argv);
     if (!glfwInit())
     {
         debug::error("fail init glfw");
         return 1;
     }
 
-    win = glfwCreateWindow(800, 600, "Primitive Engine", nullptr, nullptr);
+    glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
+    glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
+
+    win = glfwCreateWindow(800, 600, "Primitive Engine Prototipe", nullptr, nullptr);
     glfwMakeContextCurrent(win);
 
     if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress))
@@ -114,36 +160,29 @@ int main(int argc, char const *argv[])
         return 1;
     }
 
-    ImGui::CreateContext();
-    ImGui_ImplGlfw_InitForOpenGL(win, true);
-    ImGui_ImplOpenGL3_Init("#version 330");
-    if (dark_mode) ImGui::StyleColorsDark();
-    else ImGui::StyleColorsLight();
+    format_verticles();
+    load_shaders();
 
+    unsigned int psx_loc;
+    glUniform1i(psx_loc, psx_style);
     while (!glfwWindowShouldClose(win))
     {
-        glClearColor(0.1f, 0.1f, 0.1f, 0.1f);
+        float t = glfwGetTime();
+        
+        glClearColor(45.f/255.f, 180.f/255.f, 200.f/255.f, 1.0);
         glClear(GL_COLOR_BUFFER_BIT);
 
-        ImGui_ImplOpenGL3_NewFrame();
-        ImGui_ImplGlfw_NewFrame();
-        ImGui::NewFrame();
+        glUseProgram(shader_program);
 
-        draw_gui();
+        rotate(&transform, 45.f, 2);
 
-        ImGui::Render();
-        ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
+        unsigned int transform_loc = glGetUniformLocation(shader_program, "Transform");
+        glUniformMatrix4fv(transform_loc, 1, GL_FALSE, glm::value_ptr(transform));
 
-        input();
+        glBindVertexArray(vao);
+        glDrawArrays(GL_TRIANGLES, 0, 3);
 
         glfwSwapBuffers(win);
         glfwPollEvents();
     }
-    
-    ImGui_ImplOpenGL3_Shutdown();
-    ImGui_ImplGlfw_Shutdown();
-    ImGui::DestroyContext();
-    glfwDestroyWindow(win);
-    glfwTerminate();
-    return 0;
 }
