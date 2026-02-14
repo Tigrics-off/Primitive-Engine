@@ -1,4 +1,5 @@
-build/
 .vscode/
 
-!build/assets
+build/*
+!/build/assets/
+!/build/assets/**/*

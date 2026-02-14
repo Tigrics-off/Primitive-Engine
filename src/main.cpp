@@ -1,50 +1,66 @@
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
 
+#include "render/win/window.hpp"
+#include "render/shaders/shader.hpp"
+#include "render/loop/loop.hpp"
 #include "config/config.hpp"
 #include "debug/debug.hpp"
 #include "file/file.hpp"
+#include "objects/shapes.hpp"
 
 GLFWwindow *win;
 custom::config conf;
 
-unsigned int vao, vbo, shader_program;
+unsigned int shader_prog;
 
-float verticles[] = {
-    +0.0, +0.5, 0.0,      0.1, 0.1, 0.1,
-    +0.5, -0.5, 0.0,      0.1, 0.1, 0.1,
-    -0.5, -0.5, 0.0,      0.1, 0.1, 0.1,
-
-};
-
-void format_verticles()
+void input(camera &cam)
 {
-    glGenBuffers(1, &vbo);
-    glBindBuffer(GL_ARRAY_BUFFER, vbo);
-    glBufferData(GL_ARRAY_BUFFER, sizeof(verticles), verticles, GL_STATIC_DRAW);
+    float speed = 0.01f;
+    float rot_speed = 0.002f;
     
-}
+    glm::vec3 forward = cam.get_direction();
+    forward.y = 0;
+    forward = glm::normalize(forward);
 
-int main(int argc, char const *argv[])
+    if (glfwGetKey(win, GLFW_KEY_W) == GLFW_PRESS)
+        cam.translate(0, 0, forward.z * -speed);
+    if (glfwGetKey(win, GLFW_KEY_S) == GLFW_PRESS)
+        cam.translate(0, 0, forward.z * speed);
+    if (glfwGetKey(win, GLFW_KEY_A) == GLFW_PRESS)
+        cam.translate(forward.x * -speed, 0, 0);
+    if (glfwGetKey(win, GLFW_KEY_D) == GLFW_PRESS)
+        cam.translate(forward.x * speed, 0, 0);
+    
+    if (glfwGetKey(win, GLFW_KEY_UP) == GLFW_PRESS)
+        cam.rotate(rot_speed, 0, 0);
+    if (glfwGetKey(win, GLFW_KEY_DOWN) == GLFW_PRESS)
+        cam.rotate(-rot_speed, 0, 0);
+    if (glfwGetKey(win, GLFW_KEY_LEFT) == GLFW_PRESS)
+        cam.rotate(0, -rot_speed, 0);
+    if (glfwGetKey(win, GLFW_KEY_RIGHT) == GLFW_PRESS)
+        cam.rotate(0, rot_speed, 0);
+}
+int main(int argc, char *argv[])
 {
     custom::parse_config(conf);
-    if (!glfwInit()) debug::error("Failed init glfw");
-
-    conf.monitor = conf.fullscreen ? glfwGetPrimaryMonitor() : nullptr;
-    win = glfwCreateWindow(conf.width, conf.height, conf.title.c_str(), conf.monitor, nullptr);
-    if (!win) debug::error("failed create window");
+    custom::load_arg(argc, argv, conf);
     
-    glfwMakeContextCurrent(win);
-    if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress)) debug::error("Failed load glad");
-
-    while (!glfwWindowShouldClose(win))
-    {
-        glClearColor(conf.bg[0], conf.bg[1], conf.bg[2], 1.0);
-        glClear(GL_COLOR_BUFFER_BIT);
-        glfwSwapBuffers(win);
-
-        glfwPollEvents();
-    }
+    win = window::init(conf);
+    shader::load(shader_prog);
+    
+    camera cam(conf.width, conf.height);
+    cube c("assets/textures/kirpich.jpg");
+    
+    cam.translate(0, 0, -0.2);
+    loop::run(win, shader_prog, conf, [&](){
+        input(cam);
+        
+        cam.hand_matrix(shader_prog);
+        
+        c.rotate(0.01, 0.01, 0.01);
+        c.draw(shader_prog);
+    });
     
     return 0;
 }
