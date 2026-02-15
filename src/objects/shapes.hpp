@@ -2,4 +2,5 @@
 
 #include "quad.hpp"
 #include "cube.hpp"
-#include "camera/camera.hpp"
+#include "core/camera.hpp"
+#include "core/light/point.hpp"

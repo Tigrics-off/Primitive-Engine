@@ -3,6 +3,7 @@ layout(location = 0) in vec3 Pos;
 layout(location = 1) in vec2 UV;
 
 out vec2 aUV;
+out vec3 frag_pos;
 
 uniform mat4 model, view, proj;
 uniform bool psx;
@@ -10,13 +11,14 @@ uniform bool psx;
 void main()
 {
     vec4 pos = model * vec4(Pos, 1.0);
-    
     if (psx)
     {
-        float grid = 0.01;
+        float grid = 0.1;
         pos = floor(pos / grid) * grid;
     }
     
+    frag_pos = vec3(pos);
+
     pos = proj * view * pos;
     gl_Position = pos;
     aUV = UV;

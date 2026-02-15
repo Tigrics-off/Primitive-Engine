@@ -1,7 +1,7 @@
 #pragma once
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
-#include "config/config.hpp"
+#include "utils/config.hpp"
 
 namespace window
 {

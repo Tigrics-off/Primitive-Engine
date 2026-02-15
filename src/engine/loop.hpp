@@ -2,7 +2,7 @@
 #include <GLFW/glfw3.h>
 #include <functional>
 
-#include "config/config.hpp"
+#include "utils/config.hpp"
 
 namespace loop
 {

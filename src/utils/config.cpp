@@ -7,8 +7,8 @@ using json = nlohmann::json;
 #include <ctime>
 #include <string_view>
 
-#include "file/file.hpp"
-#include "debug/debug.hpp"
+#include "utils/file.hpp"
+#include "utils/debug.hpp"
 
 void check_days()
 {

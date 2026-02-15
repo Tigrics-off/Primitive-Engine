@@ -1,8 +1,8 @@
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
 
-#include "config/config.hpp"
-#include "render/shaders/shader.hpp"
+#include "utils/config.hpp"
+#include "graphics/shader.hpp"
 
 namespace window
 {

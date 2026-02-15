@@ -1,4 +1,4 @@
-#include "shape.hpp"
+#include "mesh.hpp"
 #define STB_IMAGE_IMPLEMENTATION
 #include <stb/stb_image.h>
 #include <filesystem>
@@ -32,6 +32,25 @@ void shape::set_texture(std::string texture_path)
     
     stbi_image_free(image);
 }
+
+void shape::translate(float x, float y, float z)
+{
+    object::translate(x, y, z);
+    model = glm::translate(model, glm::vec3(x, y, z));
+}
+void shape::rotate(float x, float y, float z)
+{
+    object::rotate(x, y, z);
+    model = glm::rotate(model, glm::radians(x), glm::vec3(1, 0, 0));
+    model = glm::rotate(model, glm::radians(y), glm::vec3(0, 1, 0));
+    model = glm::rotate(model, glm::radians(z), glm::vec3(0, 0, 1));
+}
+void shape::scale(float x, float y, float z)
+{
+    object::scale(x, y, z);
+    model = glm::scale(model, glm::vec3(x, y, z));
+}
+
 void shape::setup()
 {
     glGenVertexArrays(1, &vao);
@@ -69,29 +88,6 @@ void shape::draw(unsigned int shader_prog)
     glDrawElements(GL_TRIANGLES, queue.size(), GL_UNSIGNED_INT, 0);
     glBindVertexArray(0);
 }
-void shape::translate(float x, float y, float z)
-{
-    model = glm::translate(model, glm::vec3(x, y, z));
-    position += glm::vec3(x, y, z);
-}
-void shape::rotate(float x, float y, float z)
-{
-    model = glm::rotate(model, glm::radians(x), glm::vec3(1, 0, 0));
-    model = glm::rotate(model, glm::radians(y), glm::vec3(0, 1, 0));
-    model = glm::rotate(model, glm::radians(z), glm::vec3(0, 0, 1));
-
-    rotation += glm::vec3(x, y, z);
-}
-void shape::scale(float x, float y, float z)
-{
-    model = glm::scale(model, glm::vec3(x, y, z));
-
-    size += glm::vec3(x, y, z);
-}
-
-glm::vec3 shape::get_pos() { return position; }
-glm::vec3 shape::get_rotate() { return rotation; }
-glm::vec3 shape::get_scale() { return size; }
 
 shape::~shape()
 {

@@ -23,16 +23,12 @@ camera::camera(int width, int height, float fov, float min, float max)
 
 void camera::translate(float x, float y, float z)
 {
-    position += glm::vec3(x, y, z);
+    object::translate(x, y, z);
     update_view();
 }
 void camera::rotate(float x, float y, float z)
-{;
-    rotation += glm::vec3(x, y, z);
-
-    if (rotation.x > 180) rotation.y = 180;
-    if (rotation.x < 0) rotation.y = 0;
-
+{
+    object::rotate(x, y, z);
     direction = glm::vec3(
         cos(rotation.y) * cos(rotation.x),
         sin(rotation.x),
@@ -41,9 +37,12 @@ void camera::rotate(float x, float y, float z)
 
     update_view();
 }
+void camera::scale(float x, float y, float z)
+{
+    object::scale(x, y, z);
+    update_view();
+}
 
-glm::vec3 camera::get_pos() { return position; }
-glm::vec3 camera::get_rotate() { return rotation; }
 glm::vec3 camera::get_direction() { return direction; }
 
 void camera::update_view()

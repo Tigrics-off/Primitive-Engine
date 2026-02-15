@@ -1,8 +1,8 @@
 #include <glad/glad.h>
 #include <string>
 
-#include "debug/debug.hpp"
-#include "file/file.hpp"
+#include "utils/debug.hpp"
+#include "utils/file.hpp"
 
 namespace shader
 {

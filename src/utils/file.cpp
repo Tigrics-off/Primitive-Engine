@@ -1,6 +1,6 @@
 #include <fstream>
 #include <sstream>
-#include "../debug/debug.hpp"
+#include "utils/debug.hpp"
 
 namespace file
 {

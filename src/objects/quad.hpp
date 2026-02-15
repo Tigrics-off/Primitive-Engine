@@ -1,5 +1,5 @@
 #pragma once
-#include "base/shape.hpp"
+#include "graphics/mesh.hpp"
 #include <string>
 
 class quad : public shape
