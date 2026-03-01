@@ -40,6 +40,14 @@ void input(camera &cam)
     {
         cam.translate(right.x * speed, 0, right.z * speed);
     }
+    if (glfwGetKey(win, GLFW_KEY_Q) == GLFW_PRESS)
+    {
+        cam.translate(0, -speed, 0);
+    }
+    if (glfwGetKey(win, GLFW_KEY_E) == GLFW_PRESS)
+    {
+        cam.translate(0, speed, 0);
+    }
 
     if (glfwGetKey(win, GLFW_KEY_UP) == GLFW_PRESS)
     {
@@ -69,13 +77,18 @@ int main(int argc, char *argv[])
     camera cam(conf.width, conf.height);
     cube c("assets/textures/kirpich.jpg");
     cube sky("assets/textures/sky.jpg");
-    light ambient(60.0/255.0, 40.0/255.0, 125.0/255.0, 0.5);
-    point_light p;
+    light ambient(0.0, 0.0, 0.0, 0.5);
+    spot_light s;
+    model room("assets/models/Room.glb", "assets/textures/Diffuse.png");
     
     cam.translate(0, 0, -0.2);
     sky.scale(100, 100, 100);
-    p.translate(0, 3, 0);
-    loop::run(win, shader_prog, conf, [&](){
+    s.translate(0, 5, 0);
+    s.rotate(90, 0, 0);
+
+    room.scale(10, 10, 10);
+    loop::run(win, shader_prog, conf, [&]()
+    {
         input(cam);
         
         cam.hand_matrix(shader_prog);
@@ -83,9 +96,11 @@ int main(int argc, char *argv[])
         c.rotate(0.05, 0.05, 0.05);
         c.draw(shader_prog);
 
+        room.draw(shader_prog);
+
         sky.draw(shader_prog);
         ambient.enable(shader_prog);
-        p.enable(shader_prog);
+        s.enable(shader_prog);
     });
     
     return 0;

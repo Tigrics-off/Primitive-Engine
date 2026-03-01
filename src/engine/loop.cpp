@@ -11,6 +11,7 @@ namespace loop
         unsigned int psx_loc = glGetUniformLocation(shader_prog, "psx");
         
         glEnable(GL_DEPTH_TEST);
+        glDisable(GL_CULL_FACE);
         while (!glfwWindowShouldClose(win))
         {
             glClearColor(conf.bg[0], conf.bg[1], conf.bg[2], 1.0);

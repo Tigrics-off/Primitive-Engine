@@ -13,7 +13,7 @@ void main()
     vec4 pos = model * vec4(Pos, 1.0);
     if (psx)
     {
-        float grid = 0.1;
+        float grid = 0.05;
         pos = floor(pos / grid) * grid;
     }
     

@@ -1,3 +1,4 @@
+#pragma once
 #include "core/object.hpp"
 
 class light : public object

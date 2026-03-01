@@ -24,7 +24,7 @@ void light::rotate(float x, float y, float z)
     direction = glm::vec3(
         cos(rotation.y) * cos(rotation.x),
         sin(rotation.x),
-        sin(rotation.y) * cos(rotation.x)
+        -sin(rotation.y) * cos(rotation.x)
     );
 }
 
@@ -37,5 +37,5 @@ void light::enable(unsigned int shader_prog)
     unsigned int light_loc = glGetUniformLocation(shader_prog, "ambient_light");
 
     glm::vec3 result = color * strength;
-    glUniform3f(light_loc, result.x, result.y, result.z);
+    glUniform3f(light_loc, result.x / 255.0, result.y / 255.0, result.z / 255.0);
 }
