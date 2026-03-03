@@ -1,16 +1,16 @@
-#include "spot.hpp"
+#include "light.hpp"
 #include <glad/glad.h>
 
-void spot_light::set_min_angle(float value) { min_angle = value; }
-void spot_light::set_max_angle(float value) { max_angle = value; }
+void light::spot_light::set_min_angle(float value) { min_angle = value; }
+void light::spot_light::set_max_angle(float value) { max_angle = value; }
 
-float spot_light::get_min_angle() { return min_angle; }
-float spot_light::get_max_angle() { return max_angle; }
+float light::spot_light::get_min_angle() { return min_angle; }
+float light::spot_light::get_max_angle() { return max_angle; }
 
-spot_light::spot_light(float r, float g, float b, float strength) : light(r, g, b, strength)
+light::spot_light::spot_light(float r, float g, float b, float strength) : light(r, g, b, strength)
 { }
 
-void spot_light::enable(unsigned int shader_prog)
+void light::spot_light::render(unsigned int shader_prog)
 {
     #define rad glm::radians
     unsigned int spot_light_pos_loc = glGetUniformLocation(shader_prog, "spot_light_pos");

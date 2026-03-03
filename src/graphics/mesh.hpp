@@ -25,7 +25,7 @@ public:
     
     void set_texture(std::string texture_path);
     void setup();
-    void draw(unsigned int shader_prog);
+    void render(unsigned int shader_prog);
 
     ~shape();
 };

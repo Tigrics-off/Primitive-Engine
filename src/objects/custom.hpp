@@ -1,6 +1,5 @@
 #pragma once
 #include "graphics/mesh.hpp"
-#include "utils/more.hpp"
 #include "utils/file.hpp"
 
 #include <nlohmann/json.hpp>

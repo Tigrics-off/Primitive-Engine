@@ -73,7 +73,7 @@ void shape::setup()
     glBindBuffer(GL_ARRAY_BUFFER, 0);
     glBindVertexArray(0);
 }
-void shape::draw(unsigned int shader_prog)
+void shape::render(unsigned int shader_prog)
 {
     glUseProgram(shader_prog);
     unsigned int model_loc = glGetUniformLocation(shader_prog, "model");

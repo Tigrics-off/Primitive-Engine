@@ -1,0 +1,51 @@
+{
+    "model":
+    {
+        "name": "room",
+        "transform": {
+            "position" : [0, 0, 0],
+            "rotation" : [0, 0, 0],
+            "scale": [1, 1, 1]
+        },
+        "paths": {
+            "glb": "assets/models/Room.glb",
+            "texture": "assets/textures/Diffuse.png"
+        },
+        "physics": {
+            "mass": 1.0
+        }
+    },
+    "ambient":
+    {
+        "name": "embient",
+        "light_settings": {
+            "strength": 1.0,
+            "color": [60, 140, 255]
+        }
+    },
+    "point_light":
+    {
+        "name": "light",
+        "transform": {
+            "position": [0, 5, 0],
+            "rotation": [90, 0, 0],
+            "scale": [1, 1, 1]
+        },
+        "light_settings": {
+            "strength": 1.0,
+            "color": [255, 255, 255]
+        }
+    },
+    "cube":
+    {
+        "name": "sky",
+        "transform": {
+            "position": [0, 0, 0],
+            "rotation": [0, 0, 0],
+            "scale": [0, 0, 0]
+        },
+        "paths": {
+            "texture": "assets/textures/sky.png"
+        }
+    }
+}

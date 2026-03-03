@@ -1,13 +1,13 @@
-#include "point.hpp"
+#include "light.hpp"
 #include <glad/glad.h>
 
-point_light::point_light(float r, float g, float b, float strength) : light(r, g, b, strength)
+light::point_light::point_light(float r, float g, float b, float strength) : light(r, g, b, strength)
 {
     set_color(r, g, b);
     set_strength(strength);
 }
 
-void point_light::enable(unsigned int shader_prog)
+void light::point_light::render(unsigned int shader_prog)
 {
     unsigned int point_light_pos_loc = glGetUniformLocation(shader_prog, "point_light_pos");
     unsigned int point_light_strength_loc = glGetUniformLocation(shader_prog, "point_light_strength");

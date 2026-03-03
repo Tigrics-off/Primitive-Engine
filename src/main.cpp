@@ -75,32 +75,15 @@ int main(int argc, char *argv[])
     shader::load(shader_prog);
     
     camera cam(conf.width, conf.height);
-    cube c("assets/textures/kirpich.jpg");
-    cube sky("assets/textures/sky.jpg");
-    light ambient(0.0, 0.0, 0.0, 0.5);
-    spot_light s;
-    model room("assets/models/Room.glb", "assets/textures/Diffuse.png");
-    
-    cam.translate(0, 0, -0.2);
-    sky.scale(100, 100, 100);
-    s.translate(0, 5, 0);
-    s.rotate(90, 0, 0);
+    scene scene("assets/scenes/dance.json");
 
-    room.scale(10, 10, 10);
     loop::run(win, shader_prog, conf, [&]()
     {
         input(cam);
         
         cam.hand_matrix(shader_prog);
         
-        c.rotate(0.05, 0.05, 0.05);
-        c.draw(shader_prog);
-
-        room.draw(shader_prog);
-
-        sky.draw(shader_prog);
-        ambient.enable(shader_prog);
-        s.enable(shader_prog);
+        scene.render(shader_prog);
     });
     
     return 0;
