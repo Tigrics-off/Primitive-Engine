@@ -79,8 +79,8 @@ int main(int argc, char *argv[])
     loop::run(win, shader_prog, conf, [&]()
     {
         input(scene["cam"]);
-        
         scene.render(shader_prog);
+        
     });
     
     return 0;

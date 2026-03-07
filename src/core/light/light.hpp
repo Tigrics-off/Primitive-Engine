@@ -9,7 +9,7 @@ namespace light
         glm::vec3 color{1.0}, direction{0, 0, -1};
         float strength = 0.1;
     public:
-        light(float r, float g, float b, float strength);
+        light(float r = 255.0f, float g = 255.0f, float b = 255.0f, float strength = 1.0f);
 
         void set_color(float x, float y, float z);
         void set_strength(float value);

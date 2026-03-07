@@ -2,10 +2,7 @@
 #include <glad/glad.h>
 
 light::point_light::point_light(float r, float g, float b, float strength) : light(r, g, b, strength)
-{
-    set_color(r, g, b);
-    set_strength(strength);
-}
+{ }
 
 void light::point_light::render(unsigned int shader_prog)
 {

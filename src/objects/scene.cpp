@@ -112,11 +112,21 @@ scene::scene(std::string path)
 void scene::render(unsigned int shader_prog)
 {
     for (auto& [name, obj]: objects)
-    {
-        obj->render(shader_prog);
-    }
+        if (dynamic_cast<camera*>(obj))
+            obj->render(shader_prog);
+
+    for (auto& [name, obj]: objects)
+        if (!dynamic_cast<camera*>(obj))
+            obj->render(shader_prog);
 }
+
 scene::proxy scene::operator[](const std::string& name)
 {
     return {objects[name]};
+}
+
+scene::~scene()
+{
+    for (auto& [name, obj] : objects)
+        delete obj;
 }

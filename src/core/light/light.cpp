@@ -3,9 +3,9 @@
 
 #include <glm/gtc/type_ptr.hpp>
 
-light::light::light(float r = 1.0, float g = 1.0, float b = 1.0, float strength = 1.0)
+light::light::light(float r, float g, float b, float strength)
 {
-    set_color(r, g, b);
+    set_color(r/255.0, g/255.0, b/255.0);
     set_strength(strength);
 }
 
@@ -37,5 +37,5 @@ void light::light::render(unsigned int shader_prog)
     unsigned int light_loc = glGetUniformLocation(shader_prog, "ambient_light");
 
     glm::vec3 result = color * strength;
-    glUniform3f(light_loc, result.x / 255.0, result.y / 255.0, result.z / 255.0);
+    glUniform3f(light_loc, result.x, result.y, result.z);
 }

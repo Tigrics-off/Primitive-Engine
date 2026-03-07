@@ -19,6 +19,7 @@ private:
     };
 public:
     scene(std::string path);
+    ~scene();
     void render(unsigned int shader_prog);
     proxy operator[](const std::string& name);
 
