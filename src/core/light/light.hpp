@@ -20,14 +20,14 @@ namespace light
         glm::vec3 get_direction();
         float get_strength();
 
-        void render(unsigned int shader_prog);
+        void render(unsigned int shader_prog) override;
     };
 
     class point_light : public light
     {
     public:
         point_light(float r = 1.0, float g = 1.0, float b = 1.0, float strength = 1.0);
-        void render(unsigned int shader_prog);
+        void render(unsigned int shader_prog) override;
     };
 
     class spot_light : public light

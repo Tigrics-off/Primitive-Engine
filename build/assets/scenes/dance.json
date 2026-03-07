@@ -1,11 +1,10 @@
 {
-    "model":
-    {
-        "name": "room",
+    "room": {
+        "type": "model",
         "transform": {
-            "position" : [0, 0, 0],
-            "rotation" : [0, 0, 0],
-            "scale": [1, 1, 1]
+            "position": [0, 0, 0],
+            "rotation": [0, 0, 0],
+            "scale": [10, 10, 10]
         },
         "paths": {
             "glb": "assets/models/Room.glb",
@@ -15,37 +14,47 @@
             "mass": 1.0
         }
     },
-    "ambient":
-    {
-        "name": "embient",
-        "light_settings": {
+    "ambient": {
+        "type": "ambient",
+        "settings": {
             "strength": 1.0,
             "color": [60, 140, 255]
         }
     },
-    "point_light":
-    {
-        "name": "light",
+    "light": {
+        "type": "point_light",
         "transform": {
             "position": [0, 5, 0],
             "rotation": [90, 0, 0],
             "scale": [1, 1, 1]
         },
-        "light_settings": {
+        "settings": {
             "strength": 1.0,
             "color": [255, 255, 255]
         }
     },
-    "cube":
-    {
-        "name": "sky",
+    "sky": {
+        "type": "cube",
         "transform": {
             "position": [0, 0, 0],
             "rotation": [0, 0, 0],
-            "scale": [0, 0, 0]
+            "scale": [100, 100, 100]
         },
         "paths": {
-            "texture": "assets/textures/sky.png"
+            "texture": "assets/textures/sky.jpg"
+        }
+    },
+    "cam": {
+        "type": "camera",
+        "transform": {
+            "position": [0, 0, 0],
+            "rotation": [0, 0, 0],
+            "scale": [1, 1, 1]
+        },
+        "settings": {
+            "fov": 90,
+            "min": 0.01,
+            "max": 100
         }
     }
 }

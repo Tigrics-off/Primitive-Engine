@@ -1,17 +1,25 @@
 #pragma once
-#include <unordered_map>
+#include <map>
 #include "core/object.hpp"
 #include <string>
 
 class scene
 {
 private:
-    std::unordered_map<std::string, object*> objects;
+    std::map<std::string, object*> objects;
+    struct proxy
+    {
+        object* obj;
+        
+        template<typename T>
+        operator T*() {return dynamic_cast<T*>(obj);}
+        
+        template<typename T>
+        operator T&() {return dynamic_cast<T&>(*obj);}
+    };
 public:
     scene(std::string path);
-
     void render(unsigned int shader_prog);
-
-    object* operator[](const std::string& name);
+    proxy operator[](const std::string& name);
 
 };

@@ -54,8 +54,9 @@ namespace custom
         GLFWmonitor *monitor = nullptr;
         double bg[3] = {0.1, 0.1, 0.1};
     };
-    void parse_config(config &conf)
+    config parse_config()
     {
+        config conf;
         std::string text = file::read("assets/config.json");
 
         json config = json::parse(text);
@@ -70,6 +71,8 @@ namespace custom
         conf.bg[0] = config["bg_color"][0].get<double>()/255.0;
         conf.bg[1] = config["bg_color"][1].get<double>()/255.0;
         conf.bg[2] = config["bg_color"][2].get<double>()/255.0;
+
+        return conf;
     }
     void load_arg(int argc, char *argv[], config &conf)
     {

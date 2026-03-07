@@ -4,7 +4,7 @@
 class camera : public object
 {
 public:
-    void hand_matrix(unsigned int shader_prog); 
+    void render(unsigned int shader_prog) override; 
     camera(int width, int height, float fov = 60.f, float min = 0.01f, float max = 500.f);
 
     glm::vec3 get_direction();

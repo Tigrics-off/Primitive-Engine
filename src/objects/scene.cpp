@@ -1,6 +1,8 @@
 #include "scene.hpp"
 #include "shapes.hpp"
 #include "utils/file.hpp"
+#include "utils/config.hpp"
+
 #include <nlohmann/json.hpp>
 using json = nlohmann::json;
 
@@ -33,9 +35,9 @@ scene::scene(std::string path)
 {
     json file = json::parse(file::read(path));
 
-    for (auto& [type, data]: file.items())
+    for (auto& [name, data]: file.items())
     {
-        std::string name = data["name"];
+        std::string type = data["type"];
 
         if (type == "model")
         {
@@ -51,20 +53,20 @@ scene::scene(std::string path)
         {
             objects[name] = new light::light
             (
-                data["light_settings"]["color"][0],
-                data["light_settings"]["color"][1],
-                data["light_settings"]["color"][2],
-                data["light_settings"]["strength"]
+                data["settings"]["color"][0],
+                data["settings"]["color"][1],
+                data["settings"]["color"][2],
+                data["settings"]["strength"]
             );
         }
         if (type == "point_light")
         {
             objects[name] = new light::point_light
             (
-                data["light_settings"]["color"][0],
-                data["light_settings"]["color"][1],
-                data["light_settings"]["color"][2],
-                data["light_settings"]["strength"]
+                data["settings"]["color"][0],
+                data["settings"]["color"][1],
+                data["settings"]["color"][2],
+                data["settings"]["strength"]
             );
 
             apply_transform(objects[name], data);
@@ -73,20 +75,36 @@ scene::scene(std::string path)
         {
             objects[name] = new light::point_light
             (
-                data["light_settings"]["color"][0],
-                data["light_settings"]["color"][1],
-                data["light_settings"]["color"][2],
-                data["light_settings"]["strength"]
+                data["settings"]["color"][0],
+                data["settings"]["color"][1],
+                data["settings"]["color"][2],
+                data["settings"]["strength"]
             );
 
             apply_transform(objects[name], data);
         }
         if (type == "cube")
         {
-            objects[name] = new cube(
-                data["texture"]
+            objects[name] = new cube
+            (
+                data["paths"]["texture"]
             );
             apply_transform(objects[name], data);
+        }
+        if (type == "camera")
+        {
+            custom::config conf = custom::parse_config();
+            objects[name] = new camera
+            (
+                conf.width,
+                conf.height,
+                data["settings"]["fov"],
+                data["settings"]["min"],
+                data["settings"]["max"]
+            );
+
+            apply_transform(objects[name], data);
+
         }
     }
 }
@@ -95,6 +113,10 @@ void scene::render(unsigned int shader_prog)
 {
     for (auto& [name, obj]: objects)
     {
-        
+        obj->render(shader_prog);
     }
+}
+scene::proxy scene::operator[](const std::string& name)
+{
+    return {objects[name]};
 }

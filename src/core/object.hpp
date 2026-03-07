@@ -19,6 +19,8 @@ public:
     virtual void rotate(float x, float y, float z);
     virtual void scale(float x, float y, float z);
 
+    virtual void render(unsigned int) {}
+
     glm::vec3 get_pos();
     glm::vec3 get_rotate();
     glm::vec3 get_scale();

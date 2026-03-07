@@ -3,7 +3,7 @@
 #include <glm/glm.hpp>
 #include <glm/gtc/type_ptr.hpp>
 
-void camera::hand_matrix(unsigned int shader_prog)
+void camera::render(unsigned int shader_prog)
 {
     unsigned int view_loc = glGetUniformLocation(shader_prog, "view");
     unsigned int proj_loc = glGetUniformLocation(shader_prog, "proj");

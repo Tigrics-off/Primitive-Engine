@@ -68,20 +68,17 @@ void input(camera &cam)
 }
 int main(int argc, char *argv[])
 {
-    custom::parse_config(conf);
+    conf = custom::parse_config();
     custom::load_arg(argc, argv, conf);
     
     win = window::init(conf);
     shader::load(shader_prog);
-    
-    camera cam(conf.width, conf.height);
+
     scene scene("assets/scenes/dance.json");
 
     loop::run(win, shader_prog, conf, [&]()
     {
-        input(cam);
-        
-        cam.hand_matrix(shader_prog);
+        input(scene["cam"]);
         
         scene.render(shader_prog);
     });
