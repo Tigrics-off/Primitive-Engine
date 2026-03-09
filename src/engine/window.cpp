@@ -2,7 +2,7 @@
 #include <GLFW/glfw3.h>
 
 #include "utils/config.hpp"
-#include "graphics/shader.hpp"
+#include "utils/debug.hpp"
 
 namespace window
 {

@@ -5,7 +5,7 @@
 class cube : public shape
 {
 public:
-    cube(std::string path)
+    cube(std::string path, bool is_passive = false, float mass = 0.1)
     {
         vertices = {
             -0.5f, -0.5f, -0.5f,   0.0f, 0.0f,
@@ -56,5 +56,8 @@ public:
 
         setup();
         set_texture(path);
+        
+        set_passive(is_passive);
+        set_mass(mass);
     }
 };

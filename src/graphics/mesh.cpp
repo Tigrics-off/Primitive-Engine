@@ -1,19 +1,31 @@
 #include "mesh.hpp"
+#include <string>
 #define STB_IMAGE_IMPLEMENTATION
 #include <stb/stb_image.h>
 #include <filesystem>
 
-void shape::set_texture(std::string texture_path)
+#include "utils/debug.hpp"
+#include "utils/config.hpp"
+
+void shape::set_texture(std::string path)
 {
+    texture_path = path;
+    custom::config conf = custom::parse_config();
+    
     int img_width, img_height, channels;
     unsigned char *image = stbi_load(texture_path.c_str(), &img_width, &img_height, &channels, 0);
     if (!image)
     {
         debug::warn("Failed load texture " + texture_path + ". His will replaced to debug texture");
-        if (std::filesystem::exists("assets/textures/debug/coconutvtf.jpg"))
-            image = stbi_load("assets/textures/debug/coconutvtf.jpg", &img_width, &img_height, &channels, 0);
+
+        if (std::filesystem::exists(conf.texture))
+        {
+            image = stbi_load(conf.texture.c_str(), &img_width, &img_height, &channels, 0);
+        }
         else
-            debug::error("Failed load debug texture (assets/textures/debug/coconutvtf.jpg)");
+        {
+            debug::error("Failed load debug texture");
+        }
     }
     
     glGenTextures(1, &texture);
@@ -37,6 +49,10 @@ void shape::translate(float x, float y, float z)
 {
     object::translate(x, y, z);
     model = glm::translate(model, glm::vec3(x, y, z));
+
+    glm::vec3 half = size / 2.0f;
+    bound_box = { position - half, position + half};
+
 }
 void shape::rotate(float x, float y, float z)
 {
@@ -49,6 +65,10 @@ void shape::scale(float x, float y, float z)
 {
     object::scale(x, y, z);
     model = glm::scale(model, glm::vec3(x, y, z));
+
+    glm::vec3 half = size / 2.0f;
+    bound_box = { position - half, position + half};
+
 }
 
 void shape::setup()
@@ -77,7 +97,7 @@ void shape::render(unsigned int shader_prog)
 {
     glUseProgram(shader_prog);
     unsigned int model_loc = glGetUniformLocation(shader_prog, "model");
-    glUniformMatrix4fv(model_loc, 1, GL_FALSE, glm::value_ptr(model));
+    glUniformMatrix4fv(model_loc, 1, false, glm::value_ptr(model));
 
     glActiveTexture(GL_TEXTURE0);
     glBindTexture(GL_TEXTURE_2D, texture);
@@ -87,6 +107,11 @@ void shape::render(unsigned int shader_prog)
     glBindVertexArray(vao);
     glDrawElements(GL_TRIANGLES, queue.size(), GL_UNSIGNED_INT, 0);
     glBindVertexArray(0);
+
+    if (!passive) 
+    {
+        this->translate(0, (-mass * 9.81)/1000.0, 0);
+    }
 }
 
 shape::~shape()
@@ -96,3 +121,16 @@ shape::~shape()
     glDeleteBuffers(1, &ebo);
     glDeleteTextures(1, &texture);
 }
+
+void shape::set_mass(float value)
+{
+    mass = value;
+}
+void shape::set_passive(bool value)
+{
+    passive = value;
+}
+std::string shape::get_texture() { return texture_path; }
+bool shape::get_passive() { return passive; }
+float shape::get_mass() { return mass; }
+physics::bound_box shape::get_bound() const { return bound_box; }

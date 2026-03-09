@@ -1,60 +1,101 @@
 {
-    "room": {
+    "room":
+    {
         "type": "model",
-        "transform": {
+        "transform":
+        {
             "position": [0, 0, 0],
             "rotation": [0, 0, 0],
             "scale": [10, 10, 10]
         },
-        "paths": {
+        "paths":
+        {
             "glb": "assets/models/Room.glb",
             "texture": "assets/textures/Diffuse.png"
         },
-        "physics": {
-            "mass": 1.0
+        "physics":
+        {
+            "passive": true,
+            "mass": 0.1
         }
     },
-    "ambient": {
+    "ambient":
+    {
         "type": "ambient",
-        "settings": {
+        "settings":
+        {
             "strength": 1.0,
             "color": [60, 140, 255]
         }
     },
-    "light": {
+    "light":
+    {
         "type": "point_light",
-        "transform": {
+        "transform":
+        {
             "position": [0, 5, 0],
             "rotation": [90, 0, 0],
             "scale": [1, 1, 1]
         },
-        "settings": {
+        "settings":
+        {
             "strength": 1.0,
             "color": [255, 255, 255]
         }
     },
-    "sky": {
+    "sky":
+    {
         "type": "cube",
-        "transform": {
+        "transform":
+        {
             "position": [0, 0, 0],
             "rotation": [0, 0, 0],
             "scale": [100, 100, 100]
         },
-        "paths": {
+        "physics" :
+        {
+            "passive": true,
+            "mass": 0.05
+        },
+        "paths":
+        {
             "texture": "assets/textures/sky.jpg"
         }
     },
-    "cam": {
+    "cam":
+    {
         "type": "camera",
-        "transform": {
+        "transform":
+        {
             "position": [0, 0, 0],
             "rotation": [0, 0, 0],
             "scale": [1, 1, 1]
         },
-        "settings": {
+        "settings":
+        {
             "fov": 90,
             "min": 0.01,
             "max": 100
+        }
+    },
+    "knuckles":
+    {
+        "type": "model",
+        "transform":
+        {
+            "position": [0, 5, 0],
+            "rotation": [0, 0, 0],
+            "scale": [1, 1, 1]
+        },
+        "physics" :
+        {
+            "passive": false,
+            "mass": 0.05
+        },
+        "paths" :
+        {
+            "texture": "",
+            "glb": ""
         }
     }
 }

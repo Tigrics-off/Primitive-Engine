@@ -3,5 +3,9 @@
     "title": "hl3",
     "fullscreen": false,
     "psx_style": true,
-    "bg_color": [17, 145, 191]
+    "bg_color": [17, 145, 191],
+    
+    "debug_model": "assets/models/debug/knuckles.glb",
+    "debug_texture": "assets/textures/debug/coconutvtf.jpg",
+    "debug_sound": "assets/sound/debug/howie.mp3"
 }

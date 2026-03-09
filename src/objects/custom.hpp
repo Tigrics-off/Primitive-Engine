@@ -1,20 +1,43 @@
 #pragma once
 #include "graphics/mesh.hpp"
+#include "utils/config.hpp"
 #include "utils/file.hpp"
+#include "utils/debug.hpp"
 
 #include <nlohmann/json.hpp>
 using json = nlohmann::json;
 
 #include <vector>
+#include <filesystem>
 
 class model : public shape
 {
 private:
 
 public:
-    model(std::string model_path, std::string texture_path = "assets/textures/debug/coconutvtf.jpg")
+    model(std::string model_path = "", std::string texture_path = "", bool is_passive = false, float mass = 0.1)
     {
+        custom::config conf = custom::parse_config();
+        if (model_path.empty())
+        {
+            model_path = conf.model;
+        }
+        if (texture_path.empty())
+        {
+            texture_path = conf.texture;
+        }
+
         std::vector<char> file = file::read_bin(model_path);
+        
+        if (file.empty())
+        {
+            debug::warn("Failed load model " + model_path + ". He will replaced to debug model");
+            
+            if (std::filesystem::exists(conf.model))
+                file = file::read_bin(conf.model);
+            else
+                debug::error("Debug model not found");
+        }
 
         uint32_t json_len = *(uint32_t*)(file.data() + 12);
         uint32_t bin_len = *(uint32_t*)(file.data() + 12 + 8 + json_len);
@@ -71,5 +94,7 @@ public:
 
         setup();
         set_texture(texture_path);
+        set_passive(is_passive);
+        set_mass(mass);
     }
 };

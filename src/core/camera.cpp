@@ -8,8 +8,8 @@ void camera::render(unsigned int shader_prog)
     unsigned int view_loc = glGetUniformLocation(shader_prog, "view");
     unsigned int proj_loc = glGetUniformLocation(shader_prog, "proj");
 
-    glUniformMatrix4fv(view_loc, 1, GL_FALSE, glm::value_ptr(view));
-    glUniformMatrix4fv(proj_loc, 1, GL_FALSE, glm::value_ptr(proj));
+    glUniformMatrix4fv(view_loc, 1, false, glm::value_ptr(view));
+    glUniformMatrix4fv(proj_loc, 1, false, glm::value_ptr(proj));
 }
 
 camera::camera(int width, int height, float fov, float min, float max)

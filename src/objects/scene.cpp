@@ -44,9 +44,11 @@ scene::scene(std::string path)
             objects[name] = new model
             (
                 data["paths"]["glb"],
-                data["paths"]["texture"]
+                data["paths"]["texture"],
+                data["physics"]["passive"],
+                data["physics"]["mass"]
             );
-
+            
             apply_transform(objects[name], data);
         }
         if (type == "ambient")
@@ -87,7 +89,9 @@ scene::scene(std::string path)
         {
             objects[name] = new cube
             (
-                data["paths"]["texture"]
+                data["paths"]["texture"],
+                data["physics"]["passive"],
+                data["physics"]["mass"]
             );
             apply_transform(objects[name], data);
         }
@@ -104,7 +108,6 @@ scene::scene(std::string path)
             );
 
             apply_transform(objects[name], data);
-
         }
     }
 }

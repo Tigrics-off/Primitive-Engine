@@ -4,8 +4,6 @@
 #include <nlohmann/json.hpp>
 using json = nlohmann::json;
 
-#include "utils/file.hpp"
-
 namespace custom
 {
     struct config
@@ -16,6 +14,7 @@ namespace custom
         bool psx_style = true;
         GLFWmonitor *monitor = nullptr;
         double bg[3] = {0.1, 0.1, 0.1};
+        std::string model, texture, sound;
     };
     config parse_config();
     void load_arg(int argc, char *argv[], config &conf);

@@ -1,3 +1,4 @@
+#include "objects/custom.hpp"
 #include <GLFW/glfw3.h>
 #include <string>
 #include <nlohmann/json.hpp>
@@ -5,7 +6,6 @@ using json = nlohmann::json;
 
 #include <chrono>
 #include <ctime>
-#include <string_view>
 
 #include "utils/file.hpp"
 #include "utils/debug.hpp"
@@ -38,22 +38,11 @@ void check_days()
         case 208:  // 8.03
             debug::info("Don`t forget congratulate your mom");
             break;
-        default:
-            debug::warn("Funny is not available in your country");
     };
 }
 
 namespace custom
 {
-    struct config
-    {
-        int width, height;
-        std::string title;
-        bool fullscreen = false;
-        bool psx_style = true;
-        GLFWmonitor *monitor = nullptr;
-        double bg[3] = {0.1, 0.1, 0.1};
-    };
     config parse_config()
     {
         config conf;
@@ -72,10 +61,15 @@ namespace custom
         conf.bg[1] = config["bg_color"][1].get<double>()/255.0;
         conf.bg[2] = config["bg_color"][2].get<double>()/255.0;
 
+        conf.model = config["debug_model"].get<std::string>();
+        conf.texture = config["debug_texture"].get<std::string>();
+        conf.sound = config["debug_sound"].get<std::string>();
+
         return conf;
     }
     void load_arg(int argc, char *argv[], config &conf)
     {
+        bool funny = true;
         std::vector<std::string> args(argv + 1, argv + argc);
         
         for (const auto arg : args)
@@ -88,16 +82,17 @@ namespace custom
             {
                 debug::no_color(true);
             }
-            if (arg == "--funny")
+            if (arg == "--nerd")
             {
-                check_days();
+                funny = false;
             }
             if (arg == "--help")
             {
                 debug::info("--no-psx - off psx style");
                 debug::info("--no-color - off colored loging");
-                debug::info("--funny - in development");
+                debug::info("--nerd - disables Easter eggs with dates, in case you're a serious guy");
             }
         }
+        if (funny) check_days();
     }
 }

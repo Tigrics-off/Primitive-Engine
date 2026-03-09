@@ -1,12 +1,11 @@
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
+#include <string>
 
 #include "engine/window.hpp"
 #include "graphics/shader.hpp"
 #include "engine/loop.hpp"
 #include "utils/config.hpp"
-#include "utils/debug.hpp"
-#include "utils/file.hpp"
 #include "objects/shapes.hpp"
 
 GLFWwindow *win;
@@ -78,9 +77,9 @@ int main(int argc, char *argv[])
 
     loop::run(win, shader_prog, conf, [&]()
     {
-        input(scene["cam"]);
-        scene.render(shader_prog);
+        input(*scene["cam"].as<camera>());
         
+        scene.render(shader_prog);
     });
     
     return 0;
