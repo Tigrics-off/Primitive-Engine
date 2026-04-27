@@ -1,12 +1,11 @@
 #pragma once
 #include <stdlib.h>
-#include <string>
 
 namespace debug
 {
     void no_color(bool b);
     
-    void info(std::string msg);
-    void warn(std::string msg);
-    void error(std::string msg);
+    void info(const char* log, ...);
+    void warn(const char* log, ...);
+    void error(const char* log, ...);
 }

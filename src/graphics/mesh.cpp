@@ -1,4 +1,6 @@
 #include "mesh.hpp"
+#include "glm/ext/vector_float3.hpp"
+#include <cstddef>
 #include <string>
 #define STB_IMAGE_IMPLEMENTATION
 #include <stb/stb_image.h>
@@ -9,15 +11,14 @@
 
 void shape::set_texture(std::string path)
 {
-    texture_path = path;
+    texture_path.assign(path);
     custom::config conf = custom::parse_config();
     
     int img_width, img_height, channels;
     unsigned char *image = stbi_load(texture_path.c_str(), &img_width, &img_height, &channels, 0);
     if (!image)
     {
-        debug::warn("Failed load texture " + texture_path + ". His will replaced to debug texture");
-
+        debug::warn("Failed load texture %s. His will replaced to debug texture", texture_path.c_str());
         if (std::filesystem::exists(conf.texture))
         {
             image = stbi_load(conf.texture.c_str(), &img_width, &img_height, &channels, 0);
@@ -45,30 +46,33 @@ void shape::set_texture(std::string path)
     stbi_image_free(image);
 }
 
+void change_col(glm::mat4 model, physics::collision& col)
+{
+    
+}
+
 void shape::translate(float x, float y, float z)
 {
-    object::translate(x, y, z);
+    position += glm::vec3(x, y, z);
     model = glm::translate(model, glm::vec3(x, y, z));
 
-    glm::vec3 half = size / 2.0f;
-    bound_box = { position - half, position + half};
-
+    change_col(model, col);
 }
 void shape::rotate(float x, float y, float z)
 {
-    object::rotate(x, y, z);
+    rotation += glm::vec3(x, y, z);
     model = glm::rotate(model, glm::radians(x), glm::vec3(1, 0, 0));
     model = glm::rotate(model, glm::radians(y), glm::vec3(0, 1, 0));
     model = glm::rotate(model, glm::radians(z), glm::vec3(0, 0, 1));
+
+    change_col(model, col);
 }
 void shape::scale(float x, float y, float z)
 {
-    object::scale(x, y, z);
+    size *= glm::vec3(x, y, z);
     model = glm::scale(model, glm::vec3(x, y, z));
 
-    glm::vec3 half = size / 2.0f;
-    bound_box = { position - half, position + half};
-
+    change_col(model, col);
 }
 
 void shape::setup()
@@ -107,11 +111,6 @@ void shape::render(unsigned int shader_prog)
     glBindVertexArray(vao);
     glDrawElements(GL_TRIANGLES, queue.size(), GL_UNSIGNED_INT, 0);
     glBindVertexArray(0);
-
-    if (!passive) 
-    {
-        this->translate(0, (-mass * 9.81)/1000.0, 0);
-    }
 }
 
 shape::~shape()
@@ -130,7 +129,13 @@ void shape::set_passive(bool value)
 {
     passive = value;
 }
+void shape::set_velocity(float x, float y, float z)
+{
+    velocity = glm::vec3(x, y, z);
+}
+
 std::string shape::get_texture() { return texture_path; }
 bool shape::get_passive() { return passive; }
 float shape::get_mass() { return mass; }
-physics::bound_box shape::get_bound() const { return bound_box; }
+physics::collision shape::get_col() const { return col; }
+glm::vec3 shape::get_velocity() { return velocity; }

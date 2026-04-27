@@ -1,6 +1,7 @@
+#include <cstdarg>
+#include <cstdio>
 #include <iostream>
 #include <stdlib.h>
-#include <string>
 
 namespace debug
 {
@@ -10,20 +11,44 @@ namespace debug
         no_col = b;
     }
     
-    void info(std::string msg)
+    void info(const char* log, ...)
     {
-        if (no_col) std::cout << "[:)] " << msg << std::endl;
-        else std::cout << "\e[0;32m[:)] " << msg << "\e[0m" << std::endl;
+        char msg[2048];
+        va_list args;
+        va_start(args, log);
+        vsnprintf(msg, sizeof(msg), log, args);
+        va_end(args);
+
+        if (no_col)
+            std::cout << "[:)] " << msg << std::endl;
+        else
+            std::cout << "\e[0;32m[:)] " << msg << "\e[0m" << std::endl;
     }
-    void warn(std::string msg)
+    void warn(const char* log, ...)
     {
-        if (no_col) std::cout << "[:|] " << msg << std::endl;
-        else std::cout << "\e[0;33m[:|] " << msg << "\e[0m" << std::endl;
+        char msg[2048];
+        va_list args;
+        va_start(args, log);
+        vsnprintf(msg, sizeof(msg), log, args);
+        va_end(args);
+
+        if (no_col)
+            std::cout << "[:|] " << msg << std::endl;
+        else
+            std::cout << "\e[0;33m[:|] " << msg << "\e[0m" << std::endl;
     }
-    void error(std::string msg)
+    void error(const char* log, ...)
     {
-        if (no_col) std::cout << "[:(] " << msg << std::endl;
-        else std::cout << "\e[0;31m[:(] " << msg << "\e[0m" << std::endl;
+        char msg[2048];
+        va_list args;
+        va_start(args, log);
+        vsnprintf(msg, sizeof(msg), log, args);
+        va_end(args);
+
+        if (no_col)
+            std::cout << "[:(] " << msg << std::endl;
+        else
+            std::cout << "\e[0;31m[:(] " << msg << "\e[0m" << std::endl;
 
         abort();
     }

@@ -17,11 +17,13 @@ protected:
     std::vector<float> vertices;
     std::vector<unsigned int> queue;
 
-    glm::mat4 model = glm::mat4(1.0f);
+    glm::mat4 model{1.0f};
 
     bool passive = false;
     float mass = 1;
-    physics::bound_box bound_box;
+
+    physics::collision col;
+    glm::vec3 velocity{0.0f};
 public:
     void translate(float x, float y, float z) override;
     void rotate(float x, float y, float z) override;
@@ -30,11 +32,14 @@ public:
     void set_mass(float value);
     void set_passive(bool value);
     void set_texture(std::string texture_path);
-    
+    void set_velocity(float x, float y, float z);
+
     std::string get_texture();
     bool get_passive();
     float get_mass();
-    physics::bound_box get_bound() const;
+    physics::collision get_col() const;
+    glm::vec3 get_velocity();
+    
     
     void setup();
     void render(unsigned int shader_prog) override;

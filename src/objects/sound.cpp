@@ -33,7 +33,7 @@ sound_source::sound_source(std::string path, float volume)
         custom::config conf = custom::parse_config();
         if (std::filesystem::exists(conf.sound))
         {
-            debug::warn("Failed play sound " + sound_path + ". He will replaced to debug sound");
+            debug::warn("Failed play sound %s. He will replaced to debug sound", sound_path.c_str());
             r = ma_sound_init_from_file
             (
                 &engine,

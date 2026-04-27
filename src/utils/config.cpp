@@ -1,4 +1,5 @@
 #include "objects/custom.hpp"
+#define GLFW_INCLUDE_NONE
 #include <GLFW/glfw3.h>
 #include <string>
 #include <nlohmann/json.hpp>
@@ -32,7 +33,7 @@ void check_days()
             debug::info("Happy new Year");
             break;
         case 301:  // 1.04
-            debug::warn("ERROR 0x4a757374206b696464696e670a. Unknown Entity hacked engine");
+            debug::warn("ERROR 0x4a757374206b696464696e67. Unknown Entity hacked engine");
             debug::warn("Please, DELETE ENGINE IF YOU WANT LIFE");
             break;
         case 208:  // 8.03
@@ -65,6 +66,8 @@ namespace custom
         conf.texture = config["debug_texture"].get<std::string>();
         conf.sound = config["debug_sound"].get<std::string>();
 
+        conf.vsync = config["vsync"].get<bool>();
+
         return conf;
     }
     void load_arg(int argc, char *argv[], config &conf)
@@ -74,6 +77,14 @@ namespace custom
         
         for (const auto arg : args)
         {
+            if (arg == "--vsync")
+            {
+                conf.vsync = true;
+            }
+            if (arg == "--no-vsync")
+            {
+                conf.vsync = false;
+            }
             if (arg == "--no-psx")
             {
                 conf.psx_style = false;
@@ -90,6 +101,8 @@ namespace custom
             {
                 debug::info("--no-psx - off psx style");
                 debug::info("--no-color - off colored loging");
+                debug::info("--vsync - on Vsync");
+                debug::info("--no-vsync - off Vsync");
                 debug::info("--nerd - disables Easter eggs with dates, in case you're a serious guy");
             }
         }

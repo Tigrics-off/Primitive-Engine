@@ -28,13 +28,13 @@ namespace shader
         if (!good)
         {
             glGetShaderInfoLog(vert, 512, nullptr, log);
-            debug::error("Failed compile vertex shader\n" + std::string(log));
+            debug::error("Failed compile vertex shader\n %s", log);
         }
         glGetShaderiv(frag, GL_COMPILE_STATUS, &good);
         if (!good)
         {
             glGetShaderInfoLog(frag, 512, nullptr, log);
-            debug::error("Failed compile vertex shader\n" + std::string(log));
+            debug::error("Failed compile vertex shader\n %s", log);
         }
         
         shader_prog = glCreateProgram();
@@ -48,7 +48,7 @@ namespace shader
         if (!good)
         {
             glGetProgramInfoLog(shader_prog, 512, nullptr, log);
-            debug::error("Failed link shader program\n" + std::string(log));
+            debug::error("Failed link shader program\n %s", log);
         }
 
         glDeleteShader(vert);

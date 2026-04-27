@@ -1,54 +1,37 @@
 #pragma once
+#include "core/physics/physics.hpp"
+#include "glm/ext/vector_float3.hpp"
 #include "graphics/mesh.hpp"
 #include "utils/config.hpp"
 #include "utils/file.hpp"
 #include "utils/debug.hpp"
 
+#include <cstdint>
 #include <nlohmann/json.hpp>
 using json = nlohmann::json;
 
 #include <vector>
 #include <filesystem>
-
+#include <string>
 class model : public shape
 {
 private:
-
+    
 public:
-    model(std::string model_path = "", std::string texture_path = "", bool is_passive = false, float mass = 0.1)
+    void set_verticle(std::string model, std::vector<float> &vertices, std::vector<unsigned int> &queue)
     {
-        custom::config conf = custom::parse_config();
-        if (model_path.empty())
-        {
-            model_path = conf.model;
-        }
-        if (texture_path.empty())
-        {
-            texture_path = conf.texture;
-        }
-
-        std::vector<char> file = file::read_bin(model_path);
+        std::vector<char> file = file::read_bin(model);
         
-        if (file.empty())
-        {
-            debug::warn("Failed load model " + model_path + ". He will replaced to debug model");
-            
-            if (std::filesystem::exists(conf.model))
-                file = file::read_bin(conf.model);
-            else
-                debug::error("Debug model not found");
-        }
-
         uint32_t json_len = *(uint32_t*)(file.data() + 12);
         uint32_t bin_len = *(uint32_t*)(file.data() + 12 + 8 + json_len);
-
+    
         std::string json_data(file.data() + 20, json_len);
         json metadata = json::parse(json_data);
         
         char *bin_start = file.data() + 20 + json_len + 8;
         
         std::vector<float> pos, uv;
-
+    
         for (auto& mesh : metadata["meshes"])
         {
             for (auto& prim : mesh["primitives"])
@@ -91,6 +74,52 @@ public:
                 }
             }
         }
+    }
+    void set_bound(std::string model, std::vector<physics::collision::col_cube> &col)
+    {
+        std::vector<char> file = file::read_bin(model);
+
+        uint32_t json_len = *(uint32_t*)(file.data() + 12);
+
+        std::string json_data(file.data() + 20, json_len);
+        json metadata = json::parse(json_data);
+
+        for (int i = 0; i <= metadata["accessors"].size(); i++)
+        {
+            json acc = metadata["accessors"][i];
+            if (acc.contains("max"))
+            {
+                physics::collision::col_cube cube;
+                cube.min = glm::vec3(acc["min"][0], acc["min"][1], acc["min"][2]);
+                cube.max = glm::vec3(acc["max"][0], acc["max"][1], acc["max"][2]);
+                
+                col.push_back(cube);
+            }
+        }
+    }
+    model(std::string model_path = "", std::string col_path = "", std::string texture_path = "", bool is_passive = false, float mass = 1)
+    {
+        #define exists std::filesystem::exists
+        custom::config conf = custom::parse_config();
+        if (!exists(texture_path))
+        {
+            debug::warn("Failed load texture %s. He will replaced to debug texture", texture_path.c_str());
+            if (exists(conf.texture))
+                texture_path = conf.texture;
+            else
+                debug::error("Not found debug texture");
+        }
+        if (!exists(model_path))
+        {
+            debug::warn("Failed load model %s. He will replaced to debug model", model_path.c_str());
+            if (exists(conf.model))
+                model_path = conf.model;
+            else
+                debug::error("Not found debug model");
+        }
+
+        set_bound(model_path, col.cubes);
+        set_verticle(model_path, vertices, queue);
 
         setup();
         set_texture(texture_path);

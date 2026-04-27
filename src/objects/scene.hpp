@@ -1,12 +1,14 @@
 #pragma once
 #include <map>
 #include "core/object.hpp"
+#include "core/physics/physics.hpp"
 #include <string>
 
 class scene
 {
 private:
     std::map<std::string, object*> objects;
+    physics physics_engine;
     struct proxy
     {
         object* obj;
@@ -26,8 +28,8 @@ private:
     };
 public:
     scene(std::string path);
+    void render(unsigned int shader_prog, float dt);
     ~scene();
-    void render(unsigned int shader_prog);
     proxy operator[](const std::string& name);
 
 };

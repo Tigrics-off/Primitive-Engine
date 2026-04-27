@@ -55,7 +55,7 @@ vec3 calc_spot_light()
 void main()
 {
     vec4 tex_color = texture(out_texture, aUV);
-    
+
     tex_color.rgb *= ambient_light + calc_point_light() + calc_spot_light();
     frag_color = tex_color;
 }

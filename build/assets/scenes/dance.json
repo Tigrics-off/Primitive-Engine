@@ -8,15 +8,15 @@
             "rotation": [0, 0, 0],
             "scale": [10, 10, 10]
         },
-        "paths":
-        {
-            "glb": "assets/models/Room.glb",
-            "texture": "assets/textures/Diffuse.png"
-        },
-        "physics":
+        "physics" :
         {
             "passive": true,
-            "mass": 0.1
+            "mass": 1
+        },
+        "paths" :
+        {
+            "texture": "assets/textures/Diffuse.png",
+            "model": "assets/models/Room.glb"
         }
     },
     "ambient":
@@ -43,25 +43,6 @@
             "color": [255, 255, 255]
         }
     },
-    "sky":
-    {
-        "type": "cube",
-        "transform":
-        {
-            "position": [0, 0, 0],
-            "rotation": [0, 0, 0],
-            "scale": [100, 100, 100]
-        },
-        "physics" :
-        {
-            "passive": true,
-            "mass": 0.05
-        },
-        "paths":
-        {
-            "texture": "assets/textures/sky.jpg"
-        }
-    },
     "cam":
     {
         "type": "camera",
@@ -83,19 +64,28 @@
         "type": "model",
         "transform":
         {
-            "position": [0, 5, 0],
+            "position": [0, 15, 0],
             "rotation": [0, 0, 0],
             "scale": [1, 1, 1]
         },
         "physics" :
         {
             "passive": false,
-            "mass": 0.05
+            "mass": 1
         },
         "paths" :
         {
             "texture": "",
-            "glb": ""
+            "model": ""
         }
+    },
+    "ph_engine":
+    {
+        "type": "ph_engine",
+        "g": 9.81,
+        "time": 1,
+        "rest": 0.5,
+        "fric": 0.5,
+        "collisions": true
     }
 }

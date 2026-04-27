@@ -1,3 +1,4 @@
+#define GLFW_INCLUDE_NONE
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
 
@@ -20,6 +21,8 @@ namespace window
 
         glViewport(0, 0, conf.width, conf.height);
         
+        glfwSwapInterval(conf.vsync);
+
         return win;
     }
     void destroy(GLFWwindow *win)

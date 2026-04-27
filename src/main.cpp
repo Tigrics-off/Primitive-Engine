@@ -3,6 +3,7 @@
 #include <string>
 
 #include "engine/window.hpp"
+#include "glm/ext/vector_float3.hpp"
 #include "graphics/shader.hpp"
 #include "engine/loop.hpp"
 #include "utils/config.hpp"
@@ -69,17 +70,33 @@ int main(int argc, char *argv[])
 {
     conf = custom::parse_config();
     custom::load_arg(argc, argv, conf);
-    
+
     win = window::init(conf);
     shader::load(shader_prog);
 
     scene scene("assets/scenes/dance.json");
 
+    float prev_time = glfwGetTime();
+    
+    double fps_last_time = glfwGetTime();
+    int frame_count = 0;
+
     loop::run(win, shader_prog, conf, [&]()
     {
+        float time = glfwGetTime();
+        float delta_time = time - prev_time;
+        prev_time = time;
+
+        frame_count++;
+        if (time - fps_last_time >= 1.0) 
+        {
+            debug::info("%f ms/frame (%d FPS)\n", 1000.0 / double(frame_count), frame_count);
+            frame_count = 0;
+            fps_last_time = time;
+        }
+
         input(*scene["cam"].as<camera>());
-        
-        scene.render(shader_prog);
+        scene.render(shader_prog, delta_time);
     });
     
     return 0;

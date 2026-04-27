@@ -15,6 +15,7 @@ namespace custom
         GLFWmonitor *monitor = nullptr;
         double bg[3] = {0.1, 0.1, 0.1};
         std::string model, texture, sound;
+        bool vsync;
     };
     config parse_config();
     void load_arg(int argc, char *argv[], config &conf);

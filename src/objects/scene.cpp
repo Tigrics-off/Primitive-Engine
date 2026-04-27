@@ -1,29 +1,46 @@
 #include "scene.hpp"
+#include "core/light/light.hpp"
+#include "glm/ext/vector_float3.hpp"
 #include "shapes.hpp"
 #include "utils/file.hpp"
 #include "utils/config.hpp"
 
+#include <string>
+
 #include <nlohmann/json.hpp>
 using json = nlohmann::json;
+
+template<typename T>
+T get(const json& j, const std::string& path, const T& reserve = T{})
+{
+    try 
+    {
+        return j.at(json::json_pointer(path)).get<T>();
+    } 
+    catch (...) 
+    {
+        return reserve;
+    }
+}
 
 void apply_transform(object* obj, const json& data)
 {
     glm::vec3 pos, rot, scale;
     
     pos = glm::vec3(
-        data["transform"]["position"][0],
-        data["transform"]["position"][1],
-        data["transform"]["position"][2]
+        get<float>(data, "/transform/position/0"),
+        get<float>(data, "/transform/position/1"),
+        get<float>(data, "/transform/position/2")
     );
     rot = glm::vec3(
-        data["transform"]["rotation"][0],
-        data["transform"]["rotation"][1],
-        data["transform"]["rotation"][2]
+        get<float>(data, "/transform/rotation/0"),
+        get<float>(data, "/transform/rotation/1"),
+        get<float>(data, "/transform/rotation/2")
     );
     scale = glm::vec3(
-        data["transform"]["scale"][0],
-        data["transform"]["scale"][1],
-        data["transform"]["scale"][2]
+        get<float>(data, "/transform/scale/0", 1.0f),
+        get<float>(data, "/transform/scale/1", 1.0f),
+        get<float>(data, "/transform/scale/2", 1.0f)
     );
     
     obj->translate(pos.x, pos.y, pos.z);
@@ -43,10 +60,11 @@ scene::scene(std::string path)
         {
             objects[name] = new model
             (
-                data["paths"]["glb"],
-                data["paths"]["texture"],
-                data["physics"]["passive"],
-                data["physics"]["mass"]
+                get<std::string>(data, "/paths/model"),
+                get<std::string>(data, "/paths/col"),
+                get<std::string>(data, "/paths/texture"),
+                get<bool>(data, "/physics/passive"),
+                get<float>(data, "/physics/mass")
             );
             
             apply_transform(objects[name], data);
@@ -55,32 +73,32 @@ scene::scene(std::string path)
         {
             objects[name] = new light::light
             (
-                data["settings"]["color"][0],
-                data["settings"]["color"][1],
-                data["settings"]["color"][2],
-                data["settings"]["strength"]
+                get<float>(data, "/settings/color/0"),
+                get<float>(data, "/settings/color/1"),
+                get<float>(data, "/settings/color/2"),
+                get<float>(data, "/settings/strength")
             );
         }
         if (type == "point_light")
         {
             objects[name] = new light::point_light
             (
-                data["settings"]["color"][0],
-                data["settings"]["color"][1],
-                data["settings"]["color"][2],
-                data["settings"]["strength"]
+                get<float>(data, "/settings/color/0"),
+                get<float>(data, "/settings/color/1"),
+                get<float>(data, "/settings/color/2"),
+                get<float>(data, "/settings/strength")
             );
 
             apply_transform(objects[name], data);
         }
         if (type == "spot_light")
         {
-            objects[name] = new light::point_light
+            objects[name] = new light::spot_light
             (
-                data["settings"]["color"][0],
-                data["settings"]["color"][1],
-                data["settings"]["color"][2],
-                data["settings"]["strength"]
+                get<float>(data, "/settings/color/0"),
+                get<float>(data, "/settings/color/1"),
+                get<float>(data, "/settings/color/2"),
+                get<float>(data, "/settings/strength")
             );
 
             apply_transform(objects[name], data);
@@ -89,9 +107,9 @@ scene::scene(std::string path)
         {
             objects[name] = new cube
             (
-                data["paths"]["texture"],
-                data["physics"]["passive"],
-                data["physics"]["mass"]
+                get<std::string>(data, "/paths/texture"),
+                get<bool>(data, "/physics/passive"),
+                get<float>(data, "/physics/mass")
             );
             apply_transform(objects[name], data);
         }
@@ -102,17 +120,34 @@ scene::scene(std::string path)
             (
                 conf.width,
                 conf.height,
-                data["settings"]["fov"],
-                data["settings"]["min"],
-                data["settings"]["max"]
+                get<float>(data, "/settings/fov"),
+                get<float>(data, "/settings/min"),
+                get<float>(data, "/settings/max")
             );
 
             apply_transform(objects[name], data);
         }
     }
+    if (file.contains("ph_engine"))
+    {
+        auto& data = file["ph_engine"];
+        physics_engine = physics(
+            get<float>(data, "/g"),
+            get<float>(data, "/time"),
+            get<float>(data, "/rest"),
+            get<float>(data, "/fric"),
+            get<bool>(data, "/collisions")
+        );
+
+        for (auto& [name, obj] : objects)
+        {
+            if (auto* shape_obj = dynamic_cast<shape*>(obj))
+                physics_engine.add_object(shape_obj);
+        }
+    }
 }
 
-void scene::render(unsigned int shader_prog)
+void scene::render(unsigned int shader_prog, float dt)
 {
     for (auto& [name, obj]: objects)
         if (dynamic_cast<camera*>(obj))
@@ -121,6 +156,8 @@ void scene::render(unsigned int shader_prog)
     for (auto& [name, obj]: objects)
         if (!dynamic_cast<camera*>(obj))
             obj->render(shader_prog);
+
+    physics_engine.render(dt);
 }
 
 scene::proxy scene::operator[](const std::string& name)

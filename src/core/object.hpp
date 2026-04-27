@@ -8,7 +8,7 @@ class object
 protected:
     glm::vec3 position = glm::vec3(0);
     glm::vec3 rotation = glm::vec3(0);
-    glm::vec3 size = glm::vec3(0);
+    glm::vec3 size = glm::vec3(1);
 public:
     virtual void translate(float x, float y, float z);
     virtual void rotate(float x, float y, float z);

@@ -8,6 +8,8 @@ namespace loop
 {
     void run(GLFWwindow* win, unsigned int shader_prog, custom::config &conf, std::function<void()> update)
     {
+
+
         unsigned int psx_loc = glGetUniformLocation(shader_prog, "psx");
         
         glEnable(GL_DEPTH_TEST);

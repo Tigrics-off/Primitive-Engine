@@ -1,4 +1,5 @@
 #pragma once
+#include "core/physics/physics.hpp"
 #include "graphics/mesh.hpp"
 #include <string>
 
@@ -54,9 +55,15 @@ public:
             20, 21, 22, 22, 23, 20
         };
 
+        physics::collision::col_cube collision;
+        collision.min = glm::vec3(-1, -1, -1);
+        collision.max = glm::vec3(+1, +1, +1);
+
+        col.cubes.push_back(collision);
+
         setup();
         set_texture(path);
-        
+            
         set_passive(is_passive);
         set_mass(mass);
     }
